@@ -1,0 +1,33 @@
+{
+  "name": "xuzhenhua_CS336_HW5_Env",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "cs336-dev",
+  "workspaceFolder": "/workspace",
+
+  // 关键修改 1: 指定登录用户为我们在 Dockerfile 里创建的用户
+  "remoteUser": "cs336-user",
+  // 关键修改 2: 让 VS Code 自动把容器内用户的 UID 改成和你宿主机一致
+  // 这样你在容器里写的文件，在外面看就是你的，不会出现 Permission denied
+  "updateRemoteUserUID": true,
+
+
+  // 容器创建后自动执行的命令：更新 pip 并安装 uv
+  // 这里的 setup.sh 见下文，也可以直接写命令
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/workspace/.venv/bin/python",
+        "python.analysis.typeCheckingMode": "basic"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "nvidia.nsight-vscode-edition", // 编写 CUDA 代码必备
+        "eamodio.gitlens",
+        "tamasfe.even-better-toml"      // 编辑 pyproject.toml 很好用
+      ]
+    }
+  }
+}

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  cs336-dev:
+    # 这里填你提供的镜像 Tag，如果本地只有 ID 也可以填 ID
+    # 修改点 1: 改为从当前目录的 Dockerfile 构建
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USERNAME: cs336-user
+      # 这里的 image 名字你可以随便起，用来标记构建出来的镜像
+    image: xuzhenhua-cs336-hw5:v1
+
+    tty: true       # 相当于 -t，分配一个伪终端
+    stdin_open: true # 相当于 -i，保持标准输入打开    
+    volumes:
+      # 将当前目录挂载到容器内的 /workspace
+      - /home/xuzhenhua/git/assignment5-alignment/:/workspace
+      - /home/xuzhenhua/models:/models
+      - /home/xuzhenhua/datasets:/datasets
+      - /home/xuzhenhua/.cache/uv:/home/cs336-user/.cache/uv
+
+      
+    # 非常重要：防止多进程数据加载崩溃
+    shm_size: 16gb
+    
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # 指定使用宿主机的第 7 号 GPU
+              device_ids: ['7']
+              capabilities: [gpu]
+
+    # 可选：配置环境变量，加速编译
+    environment:
+      - MAX_JOBS=8  # 限制编译时的并行数，防止内存爆了
+      - FLASH_ATTENTION_FORCE_BUILD=TRUE
+      - WANDB_API_KEY=3307be87d60b3ea89ad518b811163f984518a8d3
+      - HF_ENDPOINT=https://hf-mirror.com
