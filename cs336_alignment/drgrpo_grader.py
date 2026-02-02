@@ -19,7 +19,7 @@ Provides a math answer grading function with high recall.
 Based on HF math_verify, verl, open reasoner zero, etc.
 """
 
-import re
+import regex as re
 import signal
 from itertools import islice, zip_longest
 from math import isclose
