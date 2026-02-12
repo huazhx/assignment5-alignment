@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.19.7"
+__generated_with = "0.19.9"
 app = marimo.App()
 
 
@@ -132,6 +132,7 @@ def _(
     BASE_OUTPUT_DIR,
     ds_sample,
     json,
+    normalize_r1_zero_response,
     outputs,
     r1_math_prompts,
     r1_zero_reward_fn,
@@ -140,17 +141,34 @@ def _(
     OUTPUT_FILE = BASE_OUTPUT_DIR / 'r1_zero_eval_outputs.jsonl'
     with open(OUTPUT_FILE, "w") as f_out:
         for i_a_w, output_a_w in enumerate(outputs):
-            generated_text_w = output_a_w.outputs[0].text
+            raw_text_w = output_a_w.outputs[0].text
+            generated_text_w = normalize_r1_zero_response(raw_text_w)
             expected_answer_w = ds_sample[i_a_w]['expected_answer']
             reward_w = r1_zero_reward_fn(generated_text_w, expected_answer_w)
             record = {
                 "prompt": r1_math_prompts[i_a_w],
+                "generated_response_raw": raw_text_w,
                 "generated_response": generated_text_w,
                 "expected_answer": expected_answer_w,
                 "reward": reward_w
             }
             f_out.write(json.dumps(record) + "\n")
     return
+
+
+@app.cell
+def _():
+    from cs336_alignment.drgrpo_grader import r1_zero_reward_fn
+
+    return (r1_zero_reward_fn,)
+
+
+app._unparsable_cell(
+    r"""
+    from 
+    """,
+    name="_"
+)
 
 
 if __name__ == "__main__":

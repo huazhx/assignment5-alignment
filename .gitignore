@@ -1,6 +1,6 @@
 *.bin
 models/
-data/
+data
 
 nav
 tags
@@ -169,3 +169,5 @@ cython_debug/
 # outputs and datasets files
 outputs/
 datasets/
+
+*.ipynb
