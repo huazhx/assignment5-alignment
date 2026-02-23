@@ -109,6 +109,34 @@ class DataProcessor:
             )
 
         return r1_formatted_data
+    
+    def convert_r1_zero_format_messages(self) -> list[dict]:
+        """
+        Convert evaluation data to r1_zero prompt format and return messages.
+
+        Returns:
+            List of messages
+        """
+
+        # Template for r1_zero messages
+        message_template = [
+            {"role": "system", "content": "A conversation between User and Assistant. The User asks a question, and the Assistant solves it. The Assistant first thinks about the reasoning process in the mind and then provides the User with the answer. The reasoning process is enclosed within <think> </think> and answer is enclosed within <answer> </answer> tags, respectively, i.e., <think> reasoning process here </think> <answer> answer here </answer>."},
+            {"role": "user", "content": "{question}"},
+        ]
+
+        # Apply the message template to each example
+        raw_data = self._load_json_data(self.eval_file)
+        processed_data = self._preprocess_data(raw_data)
+        messages_list = []
+        for entry in processed_data:
+            problem = entry.get("problem", "")
+            # expected_answer = entry.get("expected_answer", "")
+            messages = []
+            for message in message_template:
+                content = message["content"].replace("{question}", problem)
+                messages.append({"role": message["role"], "content": content})
+            messages_list.append(messages)
+        return messages_list
 
     def convert_r1_zero_format_file(self, output_path: pathlib.Path) -> None:
         """

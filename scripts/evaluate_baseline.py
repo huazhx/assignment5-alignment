@@ -23,6 +23,7 @@ from configs.config import settings
 from core.dataset.processor import DataProcessor
 from cs336_alignment.drgrpo_grader import r1_zero_reward_fn
 from core.pipeline.eval_vllm import evaluate_with_ground_truth
+from core.engine.generator import Generator
 
 
 def main() -> None:
@@ -43,18 +44,21 @@ def main() -> None:
     print(f"Loaded {len(examples)} examples")
 
     # Initialize vLLM model
-    print(f"Loading model from {settings.model}...")
-    llm = LLM(
-        model=str(settings.model),
-        gpu_memory_utilization=0.6,
-    )
+    # print(f"Loading model from {settings.model}...")
+    # llm = LLM(
+    #     model=str(settings.model),
+    #     gpu_memory_utilization=0.6,
+    # )
 
-    # Setup sampling parameters
-    sampling_params = SamplingParams(
+    # Initialize generator
+    print(f"Initializing generator with model {settings.model}...")
+    generator = Generator(
+        model=str(settings.model),
         temperature=settings.temperature,
         max_tokens=settings.max_tokens,
         stop=settings.stop,
     )
+
 
     # Create output directory
     output_dir = settings.outputs_dir / "baseline"
@@ -63,10 +67,9 @@ def main() -> None:
 
     print("Generating responses and evaluating...")
     results, metrics = evaluate_with_ground_truth(
-        vllm_model=llm,
+        generator=generator,
         reward_fn=r1_zero_reward_fn,
         examples=examples,
-        eval_sampling_params=sampling_params,
         output_file=output_file,
     )
 

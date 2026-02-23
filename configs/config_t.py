@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Vllm Config 
     temperature: float = 0.8
-    max_tokens: int = 4096
+    max_tokens: int = 2048
     stop: list[str] = ["</answer>"]
     include_input: bool = True
 

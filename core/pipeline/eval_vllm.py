@@ -14,20 +14,18 @@ from vllm import LLM, SamplingParams
 
 
 def evaluate_vllm(
-    vllm_model: LLM,
+    generator,
     reward_fn: Callable[[str, str], dict[str, float]],
     examples: list[dict],
-    eval_sampling_params: SamplingParams,
     output_file: Path | None = None,
 ) -> list[dict]:
     """
     Evaluate a language model on examples with ground truth answers.
 
     Args:
-        vllm_model: The vLLM model to evaluate
+        generator: The Generator instance to evaluate
         reward_fn: Function that takes (response, ground_truth) and returns reward dict
         examples: List of dicts with 'prompt' and 'expected_answer' keys
-        eval_sampling_params: Sampling parameters for generation
         output_file: Optional path to save results as JSONL
 
     Returns:
@@ -37,7 +35,7 @@ def evaluate_vllm(
     results = []
 
     # Generate outputs for all prompts
-    outputs = vllm_model.generate(prompts, eval_sampling_params)
+    outputs = generator.generate(prompts)
 
     # Compute metrics
     format_correct = 0
@@ -45,7 +43,7 @@ def evaluate_vllm(
     total = len(examples)
 
     for i, (example, output) in enumerate(zip(examples, outputs)):
-        generated_text = output.outputs[0].text
+        generated_text = output
         ground_truth = example["expected_answer"]
 
         # Compute reward scores
