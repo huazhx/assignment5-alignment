@@ -25,6 +25,7 @@ dependencies = [
     "auto-mix-prep>=0.2.0",
     "ipykernel>=6.29.5",
     "gpustat>=1.1.1",
+    "matplotlib>=3.10.8",
 ]
 
 [tool.setuptools.packages.find]

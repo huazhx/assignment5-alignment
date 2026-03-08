@@ -127,7 +127,7 @@ class DataProcessor:
         # Apply the message template to each example
         raw_data = self._load_json_data(self.eval_file)
         processed_data = self._preprocess_data(raw_data)
-        messages_list = []
+        r1_formatted_data_with_template = []
         for entry in processed_data:
             problem = entry.get("problem", "")
             # expected_answer = entry.get("expected_answer", "")
@@ -135,8 +135,13 @@ class DataProcessor:
             for message in message_template:
                 content = message["content"].replace("{question}", problem)
                 messages.append({"role": message["role"], "content": content})
-            messages_list.append(messages)
-        return messages_list
+            
+            r1_formatted_data_with_template.append({
+                "prompt": messages,
+                "expected_answer": entry["expected_answer"]
+            })
+            
+        return r1_formatted_data_with_template
 
     def convert_r1_zero_format_file(self, output_path: pathlib.Path) -> None:
         """

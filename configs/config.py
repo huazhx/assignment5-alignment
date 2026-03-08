@@ -9,11 +9,18 @@ class Settings(BaseSettings):
     # Path Config
     datasets_dir: Path = ROOT_DIR / "datasets"
     outputs_dir: Path = ROOT_DIR / "outputs"
+    models_dir: Path = Path.home() / "models"
+
     # Support both local and cluster paths for MATH validation data
     eval_file: Path = Path("/data/a5-alignment/MATH/validation.jsonl")
     if not eval_file.exists():
         eval_file = ROOT_DIR / "datasets" / "sft-reason" / "val.jsonl"
-    model: Path = Path('/home/xuzhenhua/models/Qwen2.5-Math-1.5B')
+    
+    # Model Config
+    model_name: str = "Qwen2.5-Math-1.5B"
+    model: Path = models_dir / model_name
+
+    # Prompt Config
     r1_zero_prompt_file: Path = ROOT_DIR / "cs336_alignment" / "prompts" / "r1_zero.prompt"
 
     # Vllm Config 
